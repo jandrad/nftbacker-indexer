@@ -12,7 +12,11 @@ Every 15 seconds (you can adjust this if you want to run an oracle), the queue o
 
 If there are assets that need to be marked as 'claimable' on-chain, a transaction will be submitted via eosjs.
 
-As a secondary measure, I fetch the relevant asset data from atomicassets API, just to double check that my data matches what atomicassets has. Feel free to implement your own logic here if you'd like to add other checks.
+As a secondary measure, I fetch the relevant asset data from atomicassets API, just to double check that my data matches what atomicassets has. 
+
+This requires axios in my case.
+
+Feel free to implement your own logic here if you'd like to add other checks, use other libraries etc.
 
 The structure/setup of the postgres tables is available in the [postgres file](https://github.com/mdcryptonfts/nftbacker-indexer/blob/main/postgres.md)
 
