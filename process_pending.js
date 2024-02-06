@@ -1,13 +1,11 @@
-const { transfersKey, busyFlagKey } = require('./variables');
-const { postgresPool } = require('./environment');
+const config = require('./config.json');
 
-
-const process_pending = async (redisClient) => {
+const process_pending = async (redisClient, postgresPool) => {
 	let postgresClient = null;
 
 	while (true) {
 		try {
-			const isBusy = await redisClient.set(busyFlagKey, 'true', { NX: true, EX: 5 });
+			const isBusy = await redisClient.set(config.redis.busy_flag_key, 'true', { NX: true, EX: 5 });
 
 			if (isBusy === null) {
 				await new Promise(resolve => setTimeout(resolve, 1000));
@@ -16,8 +14,8 @@ const process_pending = async (redisClient) => {
 
 			try {
 
-				let transferData = await redisClient.lRange(transfersKey, 0, -1);
-				await redisClient.del(transfersKey);
+				let transferData = await redisClient.lRange(config.redis.transfers_key, 0, -1);
+				await redisClient.del(config.redis.transfers_key);
 
 				if( (transferData && transferData.length > 0) ){
 					try{
@@ -55,7 +53,7 @@ const process_pending = async (redisClient) => {
 				}
 
 			} finally {
-				await redisClient.del(busyFlagKey);
+				await redisClient.del(config.redis.busy_flag_key);
 			}
 			break; 
 		} catch (e) {

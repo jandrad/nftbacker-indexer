@@ -1,19 +1,16 @@
+const config = require('./config.json');
 const { Api, JsonRpc } = require('eosjs');
 const { JsSignatureProvider } = require('eosjs/dist/eosjs-jssig');
 const fetch = require('node-fetch');
 const { TextDecoder, TextEncoder } = require('util');
-const { signingKey } = require('./environment');
 
-const rpcEndpoints = ["http://localhost:8888", "https://api.waxdaobp.io", "https://api.hivebp.io", "https://wax.eosusa.io"];
 
-const signatureProvider = new JsSignatureProvider([signingKey]);
-
-const authorizer = "waxdaobacker";
+const signatureProvider = new JsSignatureProvider([config.permission.private_key]);
 
 const submitSetClaimableTx = async (data, timeout) => {
   let success = false;
 
-  for (let endpoint of rpcEndpoints) {
+  for (let endpoint of config.chain_api.endpoints) {
     try {
       const rpc = new JsonRpc(endpoint, { fetch });
       const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() });
@@ -23,11 +20,11 @@ const submitSetClaimableTx = async (data, timeout) => {
           account: 'waxdaobacker',
           name: 'setclaimable',
           authorization: [{
-            actor: 'waxdaobacker',
-            permission: 'setclaimable',
+            actor: config.permission.wallet,
+            permission: config.permission.permission_name,
           }],
           data: {
-            authorizer: authorizer,
+            authorizer: config.permission.wallet,
             assets_to_update: data,
           }
         }]

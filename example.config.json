@@ -1,0 +1,78 @@
+{
+  "permission":{
+    "wallet":"YOUR_WALLET_ADDRESS",
+    "permission_name":"active",
+    "private_key":"YOUR_PRIVATE_KEY"
+  },
+  "postgres": {
+    "user": "waxdao",
+    "host": "localhost",  
+    "database": "nft_backer", 
+    "password": "password", 
+    "port": 5432
+  },
+  "redis":{
+    "transfers_key":"nft-backer-transfers",
+    "busy_flag_key":"transfers-is-busy",
+    "host":"localhost",
+    "port": 6379
+  },
+  "atomicassets": {
+    "endpoints": [
+      "https://aa.waxdaobp.io",
+      "https://atomic.hivebp.io",
+      "https://wax.eosusa.io",
+      "https://wax-atomic-api.eosphere.io",
+      "https://atomic3.hivebp.io"
+    ]
+  },
+  "chain_api":{
+    "endpoints":[
+      "http://localhost:8888", "https://api.waxdaobp.io", "https://api.hivebp.io", "https://wax.eosusa.io"
+    ]
+  },
+  "contract_ignore_list":[
+    "atomicpacksx",
+    "b.taco",
+    "battleminers",
+    "bcbrawlers",
+    "blend.nefty",
+    "blenderizerx",
+    "burn.atomic",
+    "cntrc.parsec",
+    "combz.taco",
+    "craft.nft",
+    "craft.tag",
+    "darkminingsc",
+    "f.taco",
+    "g.taco",
+    "farmersworld",
+    "game.pirates",
+    "h.musicmogul",
+    "iraces.nova",
+    "miningvoxels",
+    "msourceforge",
+    "msourcegoods",
+    "msourceguild",
+    "msourceherox",
+    "msourcemerge",
+    "neftyblocksd",
+    "neftyblocksp",
+    "nfthivecraft",
+    "nfthivedrops",
+    "nfthivepacks",
+    "nftpandawofg",
+    "niftykickgam",
+    "niftykicksgm",
+    "promo.nova",
+    "radaunpacker",
+    "radaquesttcg",
+    "realmutility",
+    "s.federation",
+    "spinniaworld",
+    "warsaken",
+    "waxdaomarket",
+    "weedborngame",
+    "wombatblends"    
+  ]
+}

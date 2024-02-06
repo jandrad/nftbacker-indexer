@@ -1,6 +1,4 @@
-const { postgresPool } = require('./environment');
-
-const handle_logremaining = async (message) => {
+const handle_logremaining = async (message, postgresPool) => {
 	let postgresClient = null;
 
 	try{

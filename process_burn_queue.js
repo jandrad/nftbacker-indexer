@@ -1,9 +1,8 @@
 const axios = require('axios');
-const { atomicEndpoints } = require('./variables');
+const config = require('./config.json');
 const { submitSetClaimableTx } = require('./submit-setclaimable-tx');
-const { postgresPool } = require('./environment');
 
-const process_burn_queue = async () => {
+const process_burn_queue = async (postgresPool) => {
   let postgresClient = null;
 
   try {
@@ -85,7 +84,7 @@ const getOwnerMatches = async (rows) => {
 
   let result = null;
 
-  for (const endpoint of atomicEndpoints) {
+  for (const endpoint of config.atomicassets.endpoints) {
     try {
       result = await getAssetInfo(endpoint, assetIds);
 

@@ -1,4 +1,4 @@
-const { transfersKey, busyFlagKey } = require('./variables');
+const config = require('./config.json');
 const { createTransferObject } = require('./helpers');
 
 /** @handle_nft_transfer
@@ -13,7 +13,7 @@ const handle_nft_transfer = async (message, client) => {
 			const first_receiver = JSON.parse(message).receiver;
 			if (first_receiver !== "atomicassets") return;
 
-			const isBusy = await client.set(busyFlagKey, 'true', {NX: true, EX: 5});
+			const isBusy = await client.set(config.redis.busy_flag_key, 'true', {NX: true, EX: 5});
 
 			if (isBusy === 0) {			
 				await new Promise(resolve => setTimeout(resolve, 1000));
@@ -27,13 +27,13 @@ const handle_nft_transfer = async (message, client) => {
 
 				for (const nft of asset_ids) {
 					try {
-						await client.rPush(transfersKey, createTransferObject(nft, global_sequence, owner));
+						await client.rPush(config.redis.transfers_key, createTransferObject(nft, global_sequence, owner));
 					} catch (e) {
 						console.log("error with redis push: " + e);
 					}
 				}
 			} finally {
-				await client.del(busyFlagKey);
+				await client.del(config.redis.busy_flag_key);
 			}
 			break;
 		} catch (e) {

@@ -8,6 +8,10 @@ I manage the app with pm2:
 
 But feel free to run it as a service instead if you like.
 
+## Note
+
+You need to set up a config.json file in the project root with your preferred settings. I've included a sample example.config.json file as a template.
+
 ## How It Works
 
 The app reads **irreversible** data from a SHIP, using [Thalos](https://thalos.waxsweden.org/) (Thanks sweden)

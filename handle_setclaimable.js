@@ -1,6 +1,4 @@
-const { postgresPool } = require('./environment');
-
-const handle_setclaimable = async (message) => {
+const handle_setclaimable = async (message, postgresPool) => {
 	let postgresClient = null;
 
 	try{

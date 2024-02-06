@@ -1,7 +1,6 @@
-const { contractsToIgnoreBurnsFrom } = require('./variables');
-const { postgresPool } = require('./environment');
+const config = require('./config.json');
 
-const handle_logburnasset = async (message) => {
+const handle_logburnasset = async (message, postgresPool) => {
 	let postgresClient = null;
 
 	try{
@@ -14,7 +13,7 @@ const handle_logburnasset = async (message) => {
 		let global_sequence = JSON.parse(message).receipt.global_sequence;
 		let owner = JSON.parse(message).data.asset_owner;
 
-		if(contractsToIgnoreBurnsFrom.includes(owner)) return;
+		if(config.contract_ignore_list.includes(owner)) return;
 
 		console.log(`${owner} burned asset ${asset_id}`)
 

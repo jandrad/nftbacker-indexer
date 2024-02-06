@@ -1,7 +1,6 @@
 const { extractFirstPart, extractSecondPart } = require('./helpers');
-const { postgresPool } = require('./environment');
 
-const handle_back_nft = async (message) => {
+const handle_back_nft = async (message, postgresPool) => {
 	console.log("nft was backed");
 	let postgresClient = null;
 	
