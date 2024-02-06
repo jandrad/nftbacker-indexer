@@ -17,15 +17,7 @@ const process_pending = async (redisClient) => {
 			try {
 
 				let transferData = await redisClient.lRange(transfersKey, 0, -1);
-
-				await redisClient.del(transfersKey, (err, response) => {
-				    if (err) {
-				        console.error("Error deleting transfers key:", err);
-				    } else {
-				        console.log("Transfers key deleted.");
-				    }
-				});		
-
+				await redisClient.del(transfersKey);
 
 				if( (transferData && transferData.length > 0) ){
 					try{
