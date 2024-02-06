@@ -2,11 +2,19 @@
 
 This is a Node JS app that serves as an indexer, and an oracle for the [waxdaobacker](https://waxblock.io/account/waxdaobacker) contract.
 
-It reads **irreversible** data from a SHIP, using [Thalos](https://thalos.waxsweden.org/) (Thanks sweden)
+I manage the app with pm2:
+
+- pm2 start index.js --name "NftBacker-Indexer" && pm2 logs "NftBacker-Indexer"
+
+But feel free to run it as a service instead if you like.
+
+## How It Works
+
+The app reads **irreversible** data from a SHIP, using [Thalos](https://thalos.waxsweden.org/) (Thanks sweden)
 
 When instant finality is available on WAX, this time period awaiting irreversibility will be much less of a burden in terms of UX.
 
-The node app uses a combination of Redis and Postgres to temporarily cache, and then index data related to transfers, burns, and NFT backing.
+We use a combination of Redis and Postgres to temporarily cache, and then index data related to transfers, burns, and NFT backing.
 
 Every 15 seconds (you can adjust this if you want to run an oracle), the queue of burned assets will be queried from postgres.
 
