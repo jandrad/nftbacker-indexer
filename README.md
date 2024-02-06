@@ -10,11 +10,15 @@ The node app uses a combination of Redis and Postgres to temporarily cache, and 
 
 Every 15 seconds (you can adjust this if you want to run an oracle), the queue of burned assets will be queried from postgres.
 
-If there are assets that need to be marked as 'claimable' on-chain, a transaction will be submitted via eosjs.
+If there are assets that need to be marked as 'claimable' on-chain, the app does the following:
 
-As a secondary measure, I fetch the relevant asset data from atomicassets API, just to double check that my data matches what atomicassets has. 
+* Use axios to fetch the relevant asset data from atomicassets API, just to double check that our postgres data matches what atomicassets has.
 
-This requires axios in my case.
+* For any assets where the match is confirmed, add these assets into an array.
+
+* Submit the confirmed matches to the chain, and update their state in the postgres table
+
+* Once the irreversible [setclaimable](https://waxblock.io/account/waxdaobacker?action=setclaimable#contract-actions) transaction comes into Thalos from our SHIP, we can then remove each asset_id from our queue.
 
 Feel free to implement your own logic here if you'd like to add other checks, use other libraries etc.
 
