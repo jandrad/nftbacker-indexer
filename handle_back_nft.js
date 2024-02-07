@@ -1,4 +1,4 @@
-const { extractFirstPart, extractSecondPart } = require('./helpers');
+const { extractFirstPart, extractSecondPart, getPrecionFromAsset } = require('./helpers');
 
 const handle_back_nft = async (message, postgresPool) => {
 	console.log("nft was backed");
@@ -6,13 +6,19 @@ const handle_back_nft = async (message, postgresPool) => {
 	
 	try{
 		const first_receiver = JSON.parse(message).receiver;
+		console.log("receiver: " + first_receiver)
 		if(first_receiver != "waxdaobacker") return;	
+		console.log("passed return")
 
 		const postgresClient = await postgresPool.connect();
 
 		let data = JSON.parse(message).data;
 
-		const tokens_to_back = data.tokens_to_back;
+		let tokens_to_back = data.tokens_to_back;
+		for(const t of tokens_to_back){
+            t.decimals = getPrecionFromAsset(t.quantity);
+            console.log('decimals is ' + t.decimals);			
+		}
 		const unique_tokens = data.tokens_to_back.length;
 		const asset_id = data.asset_id;
 		const owner = data.asset_owner;
@@ -46,7 +52,11 @@ const handle_back_nft = async (message, postgresPool) => {
 			            const currentAmount = parseFloat(extractFirstPart(existingToken.quantity, ' '));
 			            const amountToAdd = parseFloat(extractFirstPart(t.quantity, ' '));
 			            existingToken.quantity = `${currentAmount + amountToAdd} ${extractSecondPart(existingToken.quantity, ' ')}`;
+			            existingToken.decimals = getPrecionFromAsset(t.quantity);
+			            console.log('decimals is ' + existingToken.decimals);
 			        } else {
+			        	t.decimals = getPrecionFromAsset(t.quantity);
+			        	console.log('decimals are ' + t.decimals);
 			            currentTokens.push(t);
 			            tokenMap.set(tokenKey, t);
 			        }

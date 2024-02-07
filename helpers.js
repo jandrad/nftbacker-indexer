@@ -17,8 +17,20 @@ const extractSecondPart = (inputString, delimiter) => {
   return parts[1];
 }
 
+const getPrecionFromAsset = (asset) => {
+  let precision;
+  if(extractFirstPart(asset, ' ').indexOf('.') == -1){
+    precision = 0;
+  } else {
+    const quantity = extractFirstPart(asset, ' ');
+    precision = quantity.substring(quantity.indexOf('.') + 1).length;
+  }
+  return precision;               
+}
+
 module.exports = {
     createTransferObject,
     extractFirstPart,
-    extractSecondPart
+    extractSecondPart,
+    getPrecionFromAsset
 }

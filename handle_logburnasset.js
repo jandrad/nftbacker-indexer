@@ -4,14 +4,14 @@ const handle_logburnasset = async (message, postgresPool) => {
 	let postgresClient = null;
 
 	try{
-		const first_receiver = JSON.parse(message).receiver;
+		const first_receiver = JSON.parse(message)?.receiver;
 		if(first_receiver != "atomicassets") return;
 
 		postgresClient = await postgresPool.connect();
 
-		let asset_id = JSON.parse(message).data.asset_id;
-		let global_sequence = JSON.parse(message).receipt.global_sequence;
-		let owner = JSON.parse(message).data.asset_owner;
+		let asset_id = JSON.parse(message)?.data?.asset_id;
+		let global_sequence = JSON.parse(message)?.receipt?.global_sequence;
+		let owner = JSON.parse(message)?.data?.asset_owner;
 
 		if(config.contract_ignore_list.includes(owner)) return;
 
