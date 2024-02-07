@@ -7,15 +7,18 @@ const handle_logburnasset = async (message, postgresPool) => {
 		const first_receiver = JSON.parse(message)?.receiver;
 		if(first_receiver != "atomicassets") return;
 
-		postgresClient = await postgresPool.connect();
+		try{
+			postgresClient = await postgresPool.connect();
+		} catch (e) {
+			console.log(`error establishing pg connection: ${e}`)
+		}
+		
 
 		let asset_id = JSON.parse(message)?.data?.asset_id;
 		let global_sequence = JSON.parse(message)?.receipt?.global_sequence;
 		let owner = JSON.parse(message)?.data?.asset_owner;
 
 		if(config.contract_ignore_list.includes(owner)) return;
-
-		console.log(`${owner} burned asset ${asset_id}`)
 
 		try{
 			const query = `
@@ -39,7 +42,6 @@ const handle_logburnasset = async (message, postgresPool) => {
 						`;
 						const insertValues = [asset_id, owner, 0, new Date()];
 						const insertResult = await postgresClient.query(insertQuery, insertValues);
-						//console.log(res.rows[0]);
 					} catch (error) {
 						console.log(`error inserting into burn_queue: ${error}`);
 					}		        	

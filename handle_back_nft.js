@@ -6,23 +6,28 @@ const handle_back_nft = async (message, postgresPool) => {
 	
 	try{
 		const first_receiver = JSON.parse(message).receiver;
-		console.log("receiver: " + first_receiver)
 		if(first_receiver != "waxdaobacker") return;	
-		console.log("passed return")
 
-		const postgresClient = await postgresPool.connect();
-
+		try{
+			postgresClient = await postgresPool.connect();
+		} catch (e) {
+			console.log(`could not connect to postgres: ${e}`)
+		}
+		
 		let data = JSON.parse(message).data;
 
 		let tokens_to_back = data.tokens_to_back;
-		for(const t of tokens_to_back){
-            t.decimals = getPrecionFromAsset(t.quantity);
-            console.log('decimals is ' + t.decimals);			
-		}
 		const unique_tokens = data.tokens_to_back.length;
 		const asset_id = data.asset_id;
+		const backer = data.user;
 		const owner = data.asset_owner;
 		const global_sequence = JSON.parse(message).receipt.global_sequence;
+		console.log(backer + " is backing asset " + asset_id);
+
+		console.log(tokens_to_back)
+		for(const t of tokens_to_back){
+            t.decimals = getPrecionFromAsset(t.quantity);		
+		}
 
 		const insertQuery = `
 			INSERT INTO backed_nfts 
@@ -35,7 +40,6 @@ const handle_back_nft = async (message, postgresPool) => {
 		const insertResult = await postgresClient.query(insertQuery, [asset_id, owner, JSON.stringify(tokens_to_back), global_sequence, 0, unique_tokens]);
 
 		if (insertResult.rows.length === 0) {
-			console.log("insert failed, selecting and updating")
 		    const selectQuery = `SELECT backed_tokens, last_updated_global_sequence FROM backed_nfts WHERE asset_id = $1;`;
 		    const selectResult = await postgresClient.query(selectQuery, [asset_id]);		
 		    
@@ -53,10 +57,8 @@ const handle_back_nft = async (message, postgresPool) => {
 			            const amountToAdd = parseFloat(extractFirstPart(t.quantity, ' '));
 			            existingToken.quantity = `${currentAmount + amountToAdd} ${extractSecondPart(existingToken.quantity, ' ')}`;
 			            existingToken.decimals = getPrecionFromAsset(t.quantity);
-			            console.log('decimals is ' + existingToken.decimals);
 			        } else {
 			        	t.decimals = getPrecionFromAsset(t.quantity);
-			        	console.log('decimals are ' + t.decimals);
 			            currentTokens.push(t);
 			            tokenMap.set(tokenKey, t);
 			        }
@@ -64,6 +66,7 @@ const handle_back_nft = async (message, postgresPool) => {
 
 			    const updateQuery = `UPDATE backed_nfts SET backed_tokens = $2, unique_tokens = $3 WHERE asset_id = $1;`;
 			    await postgresClient.query(updateQuery, [asset_id, JSON.stringify(currentTokens), currentTokens.length]);
+			    console.log("update worked");
 			}		    	
 		} else {
 			console.log("insert worked")

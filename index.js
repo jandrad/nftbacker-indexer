@@ -14,7 +14,8 @@ const postgresPool = new Pool({
     host: config.postgres.host,  
     database: config.postgres.database, 
     password: config.postgres.password, 
-    port: config.postgres.port,            
+    port: config.postgres.port,      
+    max: config.postgres.max,      
 });
 
 const runApp = async () => {
@@ -57,6 +58,14 @@ const runApp = async () => {
 	 *  blockchain. If any exist, submit the transaction.
 	 */
 	setInterval(() => process_burn_queue(postgresPool), 15000);
+
+
+	setInterval(() => {
+	    console.log(`Total clients: ${postgresPool.totalCount}`);
+	    console.log(`Idle clients: ${postgresPool.idleCount}`);
+	    console.log(`Waiting clients: ${postgresPool.waitingCount}`);
+	}, 10000); 
+
 
     process.on('SIGINT', () => {
         client.quit();
