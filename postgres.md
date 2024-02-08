@@ -24,8 +24,15 @@
 );
 
 > GRANT ALL PRIVILEGES ON TABLE backed_nfts TO waxdao;
-
 > CREATE INDEX owner_idx ON backed_nfts (owner);
+
+## Extending table with new columns
+> ALTER TABLE backed_nfts ADD COLUMN collection_name VARCHAR(13);
+> ALTER TABLE backed_nfts ADD COLUMN schema_name VARCHAR(13);
+> ALTER TABLE backed_nfts ADD COLUMN template_id INTEGER;
+
+
+
 
 ## Table creation for queue of burned assets
 

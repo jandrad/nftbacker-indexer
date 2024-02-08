@@ -8,6 +8,7 @@ const { handle_logburnasset } = require('./handle_logburnasset');
 const { process_burn_queue } = require('./process_burn_queue');
 const { handle_setclaimable } = require('./handle_setclaimable');
 const { handle_logremaining } = require('./handle_logremaining');
+const { handle_logbackasset } = require('./handle_logbackasset');
 
 const postgresPool = new Pool({
     user: config.postgres.user,
@@ -35,12 +36,18 @@ const runApp = async () => {
 		await handle_logburnasset(message, postgresPool);
 	})		
 
+	/*
 	await subscriber.subscribe('ship::wax::actions/contract/waxdaobacker/name/backnft', async (message) => {
 		await handle_back_nft(message, postgresPool);
 	})
+	*/
 
 	await subscriber.subscribe('ship::wax::actions/contract/waxdaobacker/name/setclaimable', async (message) => {
 		await handle_setclaimable(message, postgresPool);
+	})	
+
+	await subscriber.subscribe('ship::wax::actions/contract/waxdaobacker/name/logbackasset', async (message) => {
+		await handle_logbackasset(message, postgresPool);
 	})	
 
 	await subscriber.subscribe('ship::wax::actions/contract/waxdaobacker/name/logremaining', async (message) => {
@@ -59,6 +66,9 @@ const runApp = async () => {
 	 */
 	setInterval(() => process_burn_queue(postgresPool), 15000);
 
+	/** @postgres_details
+	 *  for debugging purposes, remove for production
+	 */
 
 	setInterval(() => {
 	    console.log(`Total clients: ${postgresPool.totalCount}`);
