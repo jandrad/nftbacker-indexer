@@ -36,12 +36,6 @@ const runApp = async () => {
 		await handle_logburnasset(message, postgresPool);
 	})		
 
-	/*
-	await subscriber.subscribe('ship::wax::actions/contract/waxdaobacker/name/backnft', async (message) => {
-		await handle_back_nft(message, postgresPool);
-	})
-	*/
-
 	await subscriber.subscribe('ship::wax::actions/contract/waxdaobacker/name/setclaimable', async (message) => {
 		await handle_setclaimable(message, postgresPool);
 	})	
@@ -70,11 +64,13 @@ const runApp = async () => {
 	 *  for debugging purposes, remove for production
 	 */
 
+	/*
 	setInterval(() => {
 	    console.log(`Total clients: ${postgresPool.totalCount}`);
 	    console.log(`Idle clients: ${postgresPool.idleCount}`);
 	    console.log(`Waiting clients: ${postgresPool.waitingCount}`);
 	}, 10000); 
+	*/
 
 
     process.on('SIGINT', () => {

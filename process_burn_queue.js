@@ -1,6 +1,7 @@
 const axios = require('axios');
 const config = require('./config.json');
 const { submitSetClaimableTx } = require('./submit-setclaimable-tx');
+const { submitSetClaimableTxWithWharf } = require('./submit-tx-wharf')
 
 const process_burn_queue = async (postgresPool) => {
   let postgresClient = null;
@@ -29,7 +30,7 @@ const process_burn_queue = async (postgresPool) => {
 
         //give the tx 5 seconds before considering it failed
 				const timeoutLength = 5000;
-				const txResult = await submitSetClaimableTx(formattedData, timeoutLength);
+				const txResult = await submitSetClaimableTxWithWharf(formattedData, timeoutLength);
 
 				if(txResult){
 					for(const match of confirmedMatches){

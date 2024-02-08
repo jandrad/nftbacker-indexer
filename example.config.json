@@ -28,6 +28,7 @@
     ]
   },
   "chain_api":{
+    "chain_id":"1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4",
     "endpoints":[
       "http://localhost:8888", "https://api.waxdaobp.io", "https://api.hivebp.io", "https://wax.eosusa.io"
     ]

@@ -1,21 +1,24 @@
 const config = require('./config.json');
-const { Api, JsonRpc } = require('eosjs');
-const { JsSignatureProvider } = require('eosjs/dist/eosjs-jssig');
-const fetch = require('node-fetch');
-const { TextDecoder, TextEncoder } = require('util');
+const { Session } = require('@wharfkit/session');
+const { WalletPluginPrivateKey } = require('@wharfkit/wallet-plugin-privatekey')
 
-
-const signatureProvider = new JsSignatureProvider([config.permission.private_key]);
-
-const submitSetClaimableTx = async (data, timeout) => {
+const submitSetClaimableTxWithWharf = async (data, timeout) => {
   let success = false;
 
   for (let endpoint of config.chain_api.endpoints) {
     try {
-      const rpc = new JsonRpc(endpoint, { fetch });
-      const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() });
 
-      const apiCallPromise = api.transact({
+      const WAX_CHAIN = { id: config.chain_api.chain_id, 
+                          url: endpoint }  
+
+      const session = new Session({
+          actor: config.permission.wallet,
+          permission: config.permission.permission_name,
+          chain: WAX_CHAIN,
+          walletPlugin: new WalletPluginPrivateKey(config.permission.private_key)
+      })                          
+
+      const apiCallPromise = session.transact({
         actions: [{
           account: 'waxdaobacker',
           name: 'setclaimable',
@@ -47,5 +50,5 @@ const submitSetClaimableTx = async (data, timeout) => {
 };
 
 module.exports = {
-  submitSetClaimableTx
+  submitSetClaimableTxWithWharf
 };
