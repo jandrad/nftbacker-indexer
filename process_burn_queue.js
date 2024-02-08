@@ -1,6 +1,5 @@
 const axios = require('axios');
 const config = require('./config.json');
-const { submitSetClaimableTx } = require('./submit-setclaimable-tx');
 const { submitSetClaimableTxWithWharf } = require('./submit-tx-wharf')
 
 const process_burn_queue = async (postgresPool) => {

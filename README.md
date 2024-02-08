@@ -28,7 +28,7 @@ If there are assets that need to be marked as 'claimable' on-chain, the app does
 
 * For any assets where the match is confirmed, add these assets into an array.
 
-* Submit the confirmed matches to the chain, and update their state in the postgres table
+* Submit the confirmed matches to the chain (using [wharfkit](https://wharfkit.com/)), and update their state in the postgres table
 
 * Once the irreversible [setclaimable](https://waxblock.io/account/waxdaobacker?action=setclaimable#contract-actions) transaction comes into Thalos from our SHIP, we can then remove each asset_id from our queue.
 
