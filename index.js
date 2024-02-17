@@ -20,7 +20,10 @@ const postgresPool = new Pool({
 });
 
 const runApp = async () => {
-    const client = redis.createClient({host: config.redis.host, port: config.redis.port});
+    const client = redis.createClient({ socket: {
+		host: config.redis.host,
+		port: config.redis.port
+	}});
     await client.connect();
 
 	const subscriber = client.duplicate();
