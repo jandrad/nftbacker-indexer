@@ -1,0 +1,69 @@
+version: '3.0'
+services:
+  indexer:
+    container_name: nftbacker-indexer
+    build: .
+    restart: on-failure
+    volumes:
+      - ./config.json:/app/config.json:ro
+    networks:
+      - nftbacker
+  
+  thalos:
+    container_name: nftbacker-thalos
+    build: ./docker/thalos
+    restart: on-failure
+    volumes:
+      - ./docker/thalos/config.yml:/thalos/config.yml:ro
+    networks:
+      - nftbacker
+  
+  postgres:
+    container_name: nftbacker-db
+    image: postgres:16
+    restart: on-failure
+    shm_size: '8gb'
+    environment:
+      POSTGRES_DB: nft_backer
+      POSTGRES_USER: nefty
+      POSTGRES_PASSWORD: changeme
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d
+      - nftbacker-postgres-data:/var/lib/postgresql/data
+    networks:
+      - nftbacker
+
+  redis:
+    container_name: nftbacker-redis
+    image: redis:7-alpine
+    restart: on-failure
+    volumes:
+      - nftbacked-redis-data:/data
+    networks:
+      - nftbacker
+
+  node-ship:
+    image: kroniak/ssh-client
+    volumes:
+      - ~/.ssh:/root/.ssh:ro
+    command:
+      - ssh
+      - -v
+      - -o
+      - StrictHostKeyChecking=no
+      - ${SHIP_REMOTE_HOST}
+      - -N
+      - -L
+      - 0.0.0.0:${SHIP_PORT}:${SHIP_INTERNAL_HOST}:${SHIP_PORT}
+    networks:
+        - nftbacker
+
+networks:
+  nftbacker:
+    driver: bridge
+
+volumes:
+  nftbacker-postgres-data:
+  nftbacked-redis-data:
