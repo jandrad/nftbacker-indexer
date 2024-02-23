@@ -1,4 +1,4 @@
-const { extractFirstPart, extractSecondPart, getPrecionFromAsset } = require('./helpers');
+const { extractFirstPart, extractSecondPart } = require('./helpers');
 
 const handle_back_nft = async (message, postgresPool) => {
 	console.log("nft was backed");
@@ -25,9 +25,6 @@ const handle_back_nft = async (message, postgresPool) => {
 		console.log(backer + " is backing asset " + asset_id);
 
 		console.log(tokens_to_back)
-		for(const t of tokens_to_back){
-            t.decimals = getPrecionFromAsset(t.quantity);		
-		}
 
 		const insertQuery = `
 			INSERT INTO backed_nfts 
@@ -56,9 +53,7 @@ const handle_back_nft = async (message, postgresPool) => {
 			            const currentAmount = parseFloat(extractFirstPart(existingToken.quantity, ' '));
 			            const amountToAdd = parseFloat(extractFirstPart(t.quantity, ' '));
 			            existingToken.quantity = `${currentAmount + amountToAdd} ${extractSecondPart(existingToken.quantity, ' ')}`;
-			            existingToken.decimals = getPrecionFromAsset(t.quantity);
 			        } else {
-			        	t.decimals = getPrecionFromAsset(t.quantity);
 			            currentTokens.push(t);
 			            tokenMap.set(tokenKey, t);
 			        }

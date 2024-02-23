@@ -20,18 +20,14 @@
     backed_tokens JSON,
     last_updated_global_sequence BIGINT NOT NULL,
     is_burned SMALLINT NOT NULL,
-    unique_tokens SMALLINT NOT NULL
+    unique_tokens SMALLINT NOT NULL,
+    collection_name VARCHAR(13),
+    schema_name VARCHAR(13),
+    template_id INTEGER
 );
 
 > GRANT ALL PRIVILEGES ON TABLE backed_nfts TO waxdao;
 > CREATE INDEX owner_idx ON backed_nfts (owner);
-
-## Extending table with new columns
-> ALTER TABLE backed_nfts ADD COLUMN collection_name VARCHAR(13);
-> ALTER TABLE backed_nfts ADD COLUMN schema_name VARCHAR(13);
-> ALTER TABLE backed_nfts ADD COLUMN template_id INTEGER;
-
-
 
 
 ## Table creation for queue of burned assets
