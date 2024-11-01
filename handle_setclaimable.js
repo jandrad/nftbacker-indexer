@@ -1,9 +1,24 @@
+const config = require('./config.json');
+
 const handle_setclaimable = async (message, postgresPool) => {
 	let postgresClient = null;
 
 	try{
 		const first_receiver = JSON.parse(message).receiver;
 		if(first_receiver != "waxdaobacker") return;	
+
+		// setclaimable should be disregarded
+		// unless we are the signer.
+		// we need to make sure we are the ones who signed
+		// this transaction, or else we will end up deleting
+		// something if another oracle signs for an NFT.
+		const authorizer = JSON.parse(message).data.authorizer;
+		if(authorizer != config.permission.wallet){
+			// console log for testing purposes, TODO remove
+			console.log(`${authorizer} signed setclaimable, returning...`);
+			return;
+		}
+
 
 		postgresClient = await postgresPool.connect();
 		

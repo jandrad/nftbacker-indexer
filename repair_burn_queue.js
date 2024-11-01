@@ -20,9 +20,16 @@ const repair_burn_queue = async () => {
 
     postgresClient = await postgresPool.connect();
 
+    /*
     const queryText = `
       SELECT * FROM backed_nfts WHERE is_burned = 0;
     `;
+    */
+
+    const queryText = `
+      SELECT * FROM backed_nfts;
+    `;    
+    
     const res = await postgresClient.query(queryText);
     
     if(res.rows.length !== 0){
@@ -75,13 +82,30 @@ const repair_burn_queue = async () => {
 }
 
 const getAssetInfo = async (endpoint, assetIds) => {
-  try {
-    const response = await Promise.race([
-      axios.get(`${endpoint}/atomicassets/v1/assets?ids=${assetIds.join("%2C")}&page=1&limit=1000&order=desc&sort=asset_id`),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000))
-    ]);
+  const batchSize = 500;
+  const batchedAssetIds = [];
 
-    return response.data;
+  // Split assetIds into batches of 500
+  for (let i = 0; i < assetIds.length; i += batchSize) {
+    batchedAssetIds.push(assetIds.slice(i, i + batchSize));
+  }
+
+  try {
+    const responses = await Promise.all(batchedAssetIds.map((batch) => 
+      Promise.race([
+        axios.get(`${endpoint}/atomicassets/v1/assets?ids=${batch.join("%2C")}&page=1&limit=500&order=desc&sort=asset_id`),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000))
+      ])
+    ));
+
+    // Combine the results from all batches without changing the original structure
+    const combinedData = responses.reduce((acc, response) => {
+      // Assuming response.data is the object returned, merge it appropriately
+      acc.data = acc.data.concat(response.data.data); 
+      return acc;
+    }, { data: [] }); // Initialize with the same structure
+
+    return combinedData;
   } catch (error) {
     console.error(`Error fetching data from ${endpoint}: ${error.message}`);
     return null;
