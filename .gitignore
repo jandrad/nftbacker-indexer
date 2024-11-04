@@ -1,4 +1,8 @@
 .env
 environment.js
 config.json
+audit.js
+# Dependencies
 /node_modules
+*.md
+!postgres.md

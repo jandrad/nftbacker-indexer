@@ -1,4 +1,4 @@
-const { extractFirstPart, extractSecondPart, getPrecionFromAsset } = require('./helpers');
+const { extractFirstPart, extractSecondPart } = require('./helpers');
 
 const handle_logbackasset = async (message, postgresPool) => {
 	let postgresClient = null;
@@ -25,10 +25,6 @@ const handle_logbackasset = async (message, postgresPool) => {
 		const template_id = data.template_id;
 		const global_sequence = JSON.parse(message).receipt.global_sequence;
 		console.log(backer + " is backing asset " + asset_id + ", owned by " + owner);
-
-		for(const t of tokens_to_back){
-            t.decimals = getPrecionFromAsset(t.quantity);		
-		}
 
 		const upsertQuery = `
 			INSERT INTO backed_nfts 
